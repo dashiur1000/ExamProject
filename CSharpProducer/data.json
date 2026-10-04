@@ -1,0 +1,23 @@
+[
+  {
+    "Id": "srv-001",
+    "Server": "Production-EU",
+    "Type": "CPU",
+    "Value": 85,
+    "Status": "Warning"
+  },
+  {
+    "Id": "srv-002",
+    "Server": "Staging-US",
+    "Type": "Memory",
+    "Value": 42,
+    "Status": "Healthy"
+  },
+  {
+    "Id": null,
+    "Server": "Development-IL",
+    "Type": "Disk",
+    "Value": 95,
+    "Status": "Critical"
+  }
+]

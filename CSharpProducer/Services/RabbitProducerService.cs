@@ -17,13 +17,22 @@ namespace CSharpProducer.Services
 
         public RabbitProducerService()
         {
-            string rabbitHost =
-                Environment.GetEnvironmentVariable("RABBITMQ_HOST")
-                ?? throw new Exception("RABBITMQ_HOST missing");
+            //string rabbitHost =
+            //    Environment.GetEnvironmentVariable("RABBITMQ_HOST")
+            //    ?? throw new Exception("RABBITMQ_HOST missing");
+
+            //_exchangeName =
+            //    Environment.GetEnvironmentVariable("RABBITMQ_EXCHANGE")
+            //    ?? throw new Exception("RABBITMQ_EXCHANGE missing");
+
+
+                string rabbitHost =
+                    Environment.GetEnvironmentVariable("RABBITMQ_HOST")
+                    ?? "localhost";
 
             _exchangeName =
                 Environment.GetEnvironmentVariable("RABBITMQ_EXCHANGE")
-                ?? throw new Exception("RABBITMQ_EXCHANGE missing");
+                ?? "exam-exchange";
 
 
             var factory = new ConnectionFactory

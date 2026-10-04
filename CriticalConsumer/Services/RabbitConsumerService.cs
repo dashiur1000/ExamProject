@@ -1,0 +1,186 @@
+﻿using System.Text;
+using System.Text.Json;
+using Elastic.Clients.Elasticsearch.Xpack;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using CriticalConsumer.Models;
+
+namespace CriticalConsumer.Services
+{
+    public class RabbitConsumerService : IRabbitConsumerService
+    {
+        private readonly IConnection _connection;
+        private readonly IModel _channel;
+        private readonly string _queueName;
+
+        public RabbitConsumerService()
+        {
+            //string rabbitHost =
+            //    Environment.GetEnvironmentVariable("RABBITMQ_HOST")
+            //    ?? throw new Exception("RABBITMQ_HOST missing");
+
+            //string exchangeName =
+            //    Environment.GetEnvironmentVariable("RABBITMQ_EXCHANGE")
+            //    ?? throw new Exception("RABBITMQ_EXCHANGE missing");
+
+            //_queueName =
+            //    Environment.GetEnvironmentVariable("RABBITMQ_QUEUE")
+            //    ?? throw new Exception("RABBITMQ_QUEUE missing");
+
+
+            //string routingKey =
+            //    Environment.GetEnvironmentVariable("RABBITMQ_ROUTING_KEY")
+            //    ?? throw new Exception("RABBITMQ_ROUTING_KEY missing");
+
+            string rabbitHost =
+                Environment.GetEnvironmentVariable("RABBITMQ_HOST")
+                ?? "localhost";
+
+            string exchangeName =
+                Environment.GetEnvironmentVariable("RABBITMQ_EXCHANGE")
+                ?? "exam-exchange";
+
+            _queueName = Environment.GetEnvironmentVariable("RABBITMQ_QUEUE") ?? "critical-queue";
+
+            string routingKey = Environment.GetEnvironmentVariable("RABBITMQ_ROUTING_KEY") ?? "alert.critical";
+
+            var factory = new ConnectionFactory
+            {
+                HostName = rabbitHost
+            };
+
+
+            _connection = factory.CreateConnection();
+
+            _channel = _connection.CreateModel();
+
+
+            _channel.ExchangeDeclare(
+                exchange: exchangeName,
+                type: ExchangeType.Direct,
+                durable: true
+            );
+
+
+            _channel.QueueDeclare(
+                queue: _queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false
+            );
+
+
+            _channel.QueueBind(
+                queue: _queueName,
+                exchange: exchangeName,
+                routingKey: routingKey
+            );
+
+
+            _channel.BasicQos(
+                prefetchSize: 0,
+                prefetchCount: 1,
+                global: false
+            );
+        }
+
+
+        public void Start()
+        {
+            var consumer =
+                new EventingBasicConsumer(_channel);
+
+
+            consumer.Received += (sender, eventArgs) =>
+            {
+                try
+                {
+                    byte[] body = eventArgs.Body.ToArray();
+
+
+                    string json = Encoding.UTF8.GetString(body);
+
+
+                    Exam? message = JsonSerializer.Deserialize<Exam>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                        );
+
+                    if (message != null)
+                    {
+                        if (message.Id == null)
+                        {
+                            message.Id = "null";
+                        }
+                        using (var dbContext = new CriticalConsumer.Data.AppDbContext())
+                        {
+                            dbContext.Exams.Add(message);
+                            dbContext.SaveChanges();
+                        }
+                        Console.WriteLine($"Saved Exam ID: {message.Id} to MySQL successfully!");
+                    }
+
+
+                    Console.WriteLine();
+                    Console.WriteLine("WARNING RECEIVED");
+
+                    Console.WriteLine(
+                        $"Id: {message?.Id}"
+                    );
+
+                    Console.WriteLine(
+                        $"Server: {message?.Server}"
+                    );
+
+                    Console.WriteLine(
+                        $"Type: {message?.Type}"
+                    );
+
+                    Console.WriteLine(
+                        $"Value: {message?.Value}"
+                    );
+
+                    Console.WriteLine();
+
+
+                    _channel.BasicAck(
+                        deliveryTag: eventArgs.DeliveryTag,
+                        multiple: false
+                    );
+                }
+                catch (Exception ex)
+                {
+                    string errorDetails = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                    Console.WriteLine($"Error saving to MySQL: {errorDetails}");
+
+                    Console.WriteLine(
+                        $"Error: {ex.Message}"
+                    );
+
+
+                    _channel.BasicNack(
+                        deliveryTag: eventArgs.DeliveryTag,
+                        multiple: false,
+                        requeue: false
+                    );
+                }
+            };
+
+
+            _channel.BasicConsume(
+                queue: _queueName,
+                autoAck: false,
+                consumer: consumer
+            );
+
+
+            Console.WriteLine(
+                "Waiting for warning messages..."
+            );
+
+
+            Thread.Sleep(Timeout.Infinite);
+        }
+    }
+}

@@ -4538,7 +4538,6 @@
       },
       "frameworks": {
         "net8.0": {
-          "framework": "net8.0",
           "targetAlias": "net8.0",
           "projectReferences": {}
         }
@@ -4556,7 +4555,6 @@
     },
     "frameworks": {
       "net8.0": {
-        "framework": "net8.0",
         "targetAlias": "net8.0",
         "dependencies": {
           "Confluent.Kafka": {
@@ -4639,7 +4637,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "CSharpProducer depends on Microsoft.Extensions.Http (>= 8.0.13) but Microsoft.Extensions.Http 8.0.13 was not found. Microsoft.Extensions.Http 9.0.0 was resolved instead.",
+      "message": "CSharpProducer depends on Microsoft.Extensions.Http (>= 8.0.13) but Microsoft.Extensions.Http 8.0.13 was not found. An approximate best match of Microsoft.Extensions.Http 9.0.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Http",
       "targetGraphs": [
         "net8.0"

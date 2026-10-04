@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6cwj4kY21yc=",
+  "dgSpecHash": "E3aCmPeFIWA=",
   "success": true,
   "projectFilePath": "C:\\Users\\dzs10\\Desktop\\IDF\\ExamProject\\CSharpProducer\\CSharpProducer.csproj",
   "expectedPackageFiles": [
@@ -94,10 +94,8 @@
     {
       "code": "NU1603",
       "level": "Warning",
-      "message": "CSharpProducer depends on Microsoft.Extensions.Http (>= 8.0.13) but Microsoft.Extensions.Http 8.0.13 was not found. Microsoft.Extensions.Http 9.0.0 was resolved instead.",
-      "projectPath": "C:\\Users\\dzs10\\Desktop\\IDF\\ExamProject\\CSharpProducer\\CSharpProducer.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\dzs10\\Desktop\\IDF\\ExamProject\\CSharpProducer\\CSharpProducer.csproj",
+      "message": "CSharpProducer depends on Microsoft.Extensions.Http (>= 8.0.13) but Microsoft.Extensions.Http 8.0.13 was not found. An approximate best match of Microsoft.Extensions.Http 9.0.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Http",
       "targetGraphs": [
         "net8.0"
