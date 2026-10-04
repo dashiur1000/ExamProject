@@ -5,9 +5,6 @@ docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 docker run -d --name mysql-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=exam_db mysql:8.0
 ```
 ```
-docker exec -it mysql-db mysql -uroot -proot
-```
-```
 docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" elasticsearch:8.11.3
 ```
 ```
@@ -30,4 +27,16 @@ cd ..
 ```
 ```
 
+```
+```
+docker exec -it mysql-db mysql -uroot -proot
+```
+```
+cd ..
+```
+```
+cd PythonApi
+```
+```
+uvicorn main:app --reload
 ```

@@ -5,7 +5,7 @@ namespace CriticalConsumer.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Exam> Exams { get; set; }
+        public DbSet<Exam> Criticals { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

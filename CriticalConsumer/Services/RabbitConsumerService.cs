@@ -109,13 +109,14 @@ namespace CriticalConsumer.Services
 
                     if (message != null)
                     {
-                        if (message.Id == null)
+                        if (string.IsNullOrEmpty(message.Id))
                         {
-                            message.Id = "null";
+                            message.Id = "NULL";
                         }
+
                         using (var dbContext = new CriticalConsumer.Data.AppDbContext())
                         {
-                            dbContext.Exams.Add(message);
+                            dbContext.Criticals.Add(message);
                             dbContext.SaveChanges();
                         }
                         Console.WriteLine($"Saved Exam ID: {message.Id} to MySQL successfully!");
